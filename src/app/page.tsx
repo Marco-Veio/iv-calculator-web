@@ -5,7 +5,7 @@ import Select from "@/components/Select";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen max-h-screen overflow-hidden flex-col items-center p-24 gap-3">
+    <main className="flex min-h-screen max-h-screen overflow-hidden flex-col items-center p-5 md:p-24 gap-3">
       <p className="absolute top-2">
         Dados obtidos pelo{" "}
         <a
@@ -19,7 +19,7 @@ export default function Home() {
       </p>
       <Image alt="pokemon" />
       <Select />
-      <Input className="mt-10 w-96" />
+      <Input className="mt-10 w-full md:w-96" />
       <Response />
     </main>
   );

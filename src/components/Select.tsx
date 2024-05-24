@@ -11,7 +11,7 @@ export default function Select() {
   const { pokemonList, setSelectedPokemon } = usePokemon();
 
   return (
-    <div className="max-h-10 relative w-96">
+    <div className="max-h-10 relative md:w-96 w-full">
       <input
         className="flex h-10 w-full items-center justify-between rounded-md border border-white bg-black px-3 py-2 text-sm ring-offset-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-white focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
         onFocus={() => setOpen(true)}
