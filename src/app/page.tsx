@@ -17,7 +17,7 @@ export default function Home() {
           GamePress
         </a>
       </p>
-      <Image alt="pokemon" />
+      <Image alt="pokemon" className="mt-5 md:mt-0" />
       <Select />
       <Input className="mt-10 w-full md:w-96" />
       <Response />
