@@ -4,7 +4,7 @@ import React from "react";
 import { usePokemon } from "@/hooks/usePokemon";
 
 export default function Response() {
-  const { probability, combinations } = usePokemon();
+  const { probability, ivs } = usePokemon();
 
   return (
     <>
@@ -13,21 +13,12 @@ export default function Response() {
       </p>
 
       <div className="mt-2 overflow-y-auto h-full max-h-full flex flex-col pr-10">
-        {Object.keys(combinations).map((lvl) => {
+        {Object.keys(ivs).map((iv) => {
           return (
-            <div key={lvl} className="flex flex-col">
-              <span key={lvl} className="text-white">
-                LVL {lvl}:
+            <div key={iv} className="flex flex-col">
+              <span key={iv} className="text-white">
+                {iv}/45: {ivs[iv]}
               </span>
-              {combinations[lvl as any].map((combination) => (
-                <span
-                  className="ml-2 text-white"
-                  key={`${lvl}-${combination.ivAttack}-${combination.ivDefense}-${combination.ivStamina}`}
-                >
-                  Att: {combination.ivAttack}, Def: {combination.ivDefense},
-                  Sta: {combination.ivStamina}
-                </span>
-              ))}
             </div>
           );
         })}

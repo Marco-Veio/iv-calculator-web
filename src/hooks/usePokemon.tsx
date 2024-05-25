@@ -1,6 +1,6 @@
 "use client";
 
-import { IVCombinations } from "@/types/IV";
+import { IVPercents, IVStats } from "@/types/IV";
 import { Pokemon } from "@/types/Pokemon";
 import axios from "axios";
 import React, {
@@ -23,7 +23,7 @@ type PokemonContextProps = {
   targetCP?: number;
   setTargetCP: Dispatch<SetStateAction<number | undefined>>;
   probability: string;
-  combinations: IVCombinations;
+  ivs: IVPercents;
   pokemonData?: Pokemon;
 };
 
@@ -34,7 +34,7 @@ export function PokemonProvider({ children }: Props) {
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [targetCP, setTargetCP] = useState<number>();
   const [probability, setProbability] = useState("0%");
-  const [combinations, setCombinations] = useState<IVCombinations>({});
+  const [ivs, setIvs] = useState<IVPercents>({});
 
   const IVThreshold = 40;
 
@@ -164,13 +164,12 @@ export function PokemonProvider({ children }: Props) {
   );
 
   useEffect(() => {
-    let ivCombinations = {} as IVCombinations;
+    const ivStats = {} as IVStats;
 
     if (baseAttack && baseDefense && baseStamina && targetCP) {
       for (let level = 1; level <= 50; level += 0.5) {
         // @ts-ignore
         let levelMultiplier = levelMultipliers[level];
-        let combinations = [];
 
         for (let ivAttack = 0; ivAttack <= 15; ivAttack++) {
           for (let ivDefense = 0; ivDefense <= 15; ivDefense++) {
@@ -187,35 +186,44 @@ export function PokemonProvider({ children }: Props) {
               );
 
               if (Math.abs(cp - targetCP) < 1) {
-                combinations.push({
-                  ivAttack,
-                  ivDefense,
-                  ivStamina,
-                });
+                const ivTotal = ivAttack + ivDefense + ivStamina;
+                if (!ivStats[ivTotal]) {
+                  ivStats[ivTotal] = 0;
+                }
+                ivStats[ivTotal]++;
               }
             }
           }
         }
+      }
 
-        if (combinations.length > 0) {
-          ivCombinations[level] = combinations;
+      const totalCombinations = Object.values(ivStats).reduce(
+        (a, b) => a + b,
+        0
+      );
+
+      const IVpercentsTemp: IVPercents = {};
+      for (let ivTotal in ivStats) {
+        const percentage = (ivStats[ivTotal] / totalCombinations) * 100;
+        if (percentage > 0) {
+          IVpercentsTemp[ivTotal] = `${percentage.toFixed(2)}%`;
         }
       }
 
-      setCombinations(ivCombinations);
+      const highIVCombinations = Object.entries(ivStats).reduce(
+        (acc, [ivTotal, count]) => {
+          if (+ivTotal > IVThreshold) {
+            acc += count;
+          }
+          return acc;
+        },
+        0
+      );
 
-      const totalCombinations = Object.values(ivCombinations).flat().length;
-      const totalAbove90 = Object.values(ivCombinations)
-        .flat()
-        .filter(
-          (combination) =>
-            combination.ivAttack +
-              combination.ivDefense +
-              combination.ivStamina >
-            IVThreshold
-        ).length;
-      const probabilityAbove90 = totalAbove90 / totalCombinations;
-      setProbability(`${(probabilityAbove90 * 100).toFixed(2)}%`);
+      setProbability(
+        `${((highIVCombinations / totalCombinations) * 100).toFixed(2)}%`
+      );
+      setIvs(IVpercentsTemp);
     }
   }, [baseAttack, baseDefense, baseStamina, levelMultipliers, targetCP]);
 
@@ -227,7 +235,7 @@ export function PokemonProvider({ children }: Props) {
         setSelectedPokemon,
         targetCP,
         setTargetCP,
-        combinations,
+        ivs,
         probability,
         pokemonData,
       }}

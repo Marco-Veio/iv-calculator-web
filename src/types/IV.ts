@@ -1,9 +1,7 @@
-export interface IV {
-  ivAttack: number;
-  ivDefense: number;
-  ivStamina: number;
+export interface IVStats {
+  [key: string]: number;
 }
 
-export interface IVCombinations {
-  [key: number]: IV[];
+export interface IVPercents {
+  [key: string]: string;
 }
