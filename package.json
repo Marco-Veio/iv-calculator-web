@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.0.0",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "lucide-react": "^0.379.0",
     "next": "14.2.30",
     "react": "^18",
